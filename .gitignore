@@ -1,0 +1,18 @@
+*~
+*.tmp
+*.bak
+\#*
+
+# NodeJS specific #
+.nyc_output/
+coverage/
+node_modules/
+npm-debug.log
+package-lock.json
+test/*.log
+
+.vscode/
+coverage/
+
+# Sylvain's script to count lines
+lines.sh

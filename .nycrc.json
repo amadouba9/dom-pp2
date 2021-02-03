@@ -1,0 +1,6 @@
+{
+	"extension": [
+		".mjs"
+	  ],
+	"reporter" : ["html", "lcov"]
+}
