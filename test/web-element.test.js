@@ -38,13 +38,23 @@ import { load_dom } from "./test-util.mjs";
 // Local imports
 import {
   BackgroundColor,
+  BorderColor,
+  BorderRadius,
+  BorderStyle,
+  BorderWidth,
+  CssPropertyFunction,
+  Color,
   CompoundDesignator,
   ConstantDesignator,
   DimensionHeight,
+  Display,
   DimensionWidth,
   ElementAttributeValue,
   EnumeratedValue,
   FindBySelector,
+  Float,
+  FontFamily,
+  FontSize,
   MarginTop,
   MarginBottom,
   MarginRight,
@@ -56,10 +66,12 @@ import {
   PaddingBottom,
   PaddingRight,
   PaddingLeft,
+  Position,
   ReturnValue,
   Tracer,
-  Color,
+  Visibility
 } from "../index.mjs";
+import { Opacity } from "../modules/web-element.mjs";
 
 describe("Web element tests", () => {
   describe("FindBySelector", () => {
@@ -129,126 +141,219 @@ describe("Web element tests", () => {
       expect(h).to.equal(200);
     });
   });
-  describe("BackgroundColor", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var backgrColor = dom.window.document.querySelector("body");
-      var f = new BackgroundColor();
-      var v = f.evaluate(backgrColor);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal("yellow");
+  describe("Check formatting properties", ()=>{
+    it("Check font-size", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var fontSize = dom.window.document.querySelector("#title")
+      var f = new FontSize()
+      var v = f.evaluate(fontSize)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("30px")
+    });
+    it("Check font-family", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var fontFamily = dom.window.document.querySelector("#title")
+      var f  = new FontFamily()
+      var v = f.evaluate(fontFamily)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("cursive")
     });
   });
-  describe("Color", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var color = dom.window.document.querySelector("#p1");
-      var f = new Color();
-      var v = f.evaluate(color);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal("green");
+
+  describe("Check color and background properties", ()=>{
+    it("Check color", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var h1col = dom.window.document.querySelector(".heading")
+      var f = new Color()
+      var v = f.evaluate(h1col)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("green")
+      //expect(h).to.equal('rgb(' + 0 + ',' + 128 + ',' + 0 + ')')
+    });
+    it("Check background-color", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var bgColor = dom.window.document.querySelector(".testElem")
+      var f = new BackgroundColor()
+      var v = f.evaluate(bgColor)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("blue")
+    });
+    it("Check opacity", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var opacityElem = dom.window.document.querySelector("#titlePositionDisp")
+      var f = new Opacity()
+      var v = f.evaluate(opacityElem)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("1")
+    })
+  });
+
+  describe("Check margin-xx for DOM element", ()=>{
+    it("Check margin-top", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var mgTop = dom.window.document.querySelector(".testElem")
+      var f = new MarginTop()
+      var v = f.evaluate(mgTop)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("20px")
+    });
+
+    it("Check margin-bottom", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var marginBottom = dom.window.document.querySelector(".testElem")
+      var f = new MarginBottom()
+      var v = f.evaluate(marginBottom)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("20px")
+    });
+
+    it("Check margin-left", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var marginLeft = dom.window.document.querySelector(".testElem")
+      var f = new MarginLeft()
+      var v = f.evaluate(marginLeft)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("40px")
+    });
+
+    it("Check margin-right", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var marginRight = dom.window.document.querySelector(".testElem")
+      var f = new MarginRight()
+      var v = f.evaluate(marginRight)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("40px")
     });
   });
-  describe("Margin-top", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var marginTop = dom.window.document.querySelector("#h2");
-      var f = new MarginTop();
-      var v = f.evaluate(marginTop);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
+
+  describe("Check padding-xx for DOM element", ()=>{
+    it("check padding-top", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var paddingTop = dom.window.document.querySelector(".testElem")
+      var f = new PaddingTop()
+      var v = f.evaluate(paddingTop)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("30px")
+    });
+
+    it("Check padding-bottom", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var paddingBottom = dom.window.document.querySelector(".testElem")
+      var f = new PaddingBottom()
+      var v = f.evaluate(paddingBottom)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("30px")
+    });
+
+    it("Check padding-left", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var paddingLeft = dom.window.document.querySelector(".testElem")
+      var f = new PaddingLeft()
+      var v = f.evaluate(paddingLeft)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("50px")
+    });
+
+    it("Check padding-right", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var paddingRight = dom.window.document.querySelector(".testElem")
+      var f = new PaddingRight()
+      var v = f.evaluate(paddingRight)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("50px")
     });
   });
-  describe("Margin-bottom", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var marginBottom = dom.window.document.querySelector("#div1");
-      var f = new MarginBottom();
-      var v = f.evaluate(marginBottom);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(50);
+  describe("Check border for DOM element", ()=>{
+    it("Check border-width", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var borderWidth = dom.window.document.querySelector(".testElem")
+      var f = new BorderWidth()
+      var v = f.evaluate(borderWidth)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("10px")
+    })
+    it("Check border-style", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var borderStyle = dom.window.document.querySelector(".testElem")
+      var f = new BorderStyle()
+      var v = f.evaluate(borderStyle)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("solid")
+    })
+    it("Check border-color", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var borderColor = dom.window.document.querySelector(".testElem")
+      var f = new BorderColor()
+      var v = f.evaluate(borderColor)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("red")
+    })
+    it("Check bordr-radius", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var borderRadius = dom.window.document.querySelector(".testElem")
+      var f = new BorderRadius()
+      var v = f.evaluate(borderRadius)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("10px")
     });
-  });
-  describe("Margin-right", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var marginRight = dom.window.document.querySelector("#div1");
-      var f = new MarginRight();
-      var v = f.evaluate(marginRight);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
-  describe("Margin-left", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var marginLeft = dom.window.document.querySelector("#div1");
-      var f = new MarginLeft();
-      var v = f.evaluate(marginLeft);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
-  describe("Padding-top", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var paddingTop = dom.window.document.querySelector("#p1");
-      var f = new PaddingTop();
-      var v = f.evaluate(paddingTop);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
-  describe("Padding-bottom", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var paddingBottom = dom.window.document.querySelector("#p1");
-      var f = new PaddingBottom();
-      var v = f.evaluate(paddingBottom);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
-  describe("Padding-right", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var paddingRight = dom.window.document.querySelector("#p1");
-      var f = new PaddingRight();
-      var v = f.evaluate(paddingRight);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
-  describe("Padding-left", () => {
-    it("Value", async () => {
-      var dom = await load_dom("./test/pages/stub-1.html");
-      var body = dom.window.document.body;
-      var paddingLeft = dom.window.document.querySelector("#p1");
-      var f = new PaddingLeft();
-      var v = f.evaluate(paddingLeft);
-      expect(v).to.be.an.instanceof(ElementAttributeValue);
-      var h = v.getValue();
-      expect(h).to.equal(20);
-    });
-  });
+  })
+  describe("Check position and display of DOM elements", ()=>{
+    it("Check display", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var display = dom.window.document.querySelector(".displayElem")
+      var f = new Display()
+      var v = f.evaluate(display)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("inline-block")
+    })
+    it("Check visibility", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var visibility = dom.window.document.querySelector("#dispVisiblity")
+      var f = new Visibility()
+      var v = f.evaluate(visibility)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("hidden")
+    })
+    it("Check position", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var position = dom.window.document.querySelector("#titlePositionDisp")
+      var f = new Position()
+      var v = f.evaluate(position)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("relative")
+    })
+    it("Check float", async()=>{
+      var dom = await load_dom("./test/pages/stub-2.html")
+      var float = dom.window.document.querySelector("#rightContent")
+      var f = new Float()
+      var v = f.evaluate(float)
+      expect(v).to.be.an.instanceOf(ElementAttributeValue)
+      var h = v.getValue()
+      expect(h).to.equal("right")
+    })
+  })
+
+
 });
 
 // :wrap=soft:tabSize=2:indentWidth=2:

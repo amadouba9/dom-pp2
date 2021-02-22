@@ -14,5 +14,8 @@ test/*.log
 .vscode/
 coverage/
 
+# ESLint HTML report
+eslint.html
+
 # Sylvain's script to count lines
 lines.sh

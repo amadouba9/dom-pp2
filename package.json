@@ -7,20 +7,27 @@
     "scripts": {
         "test": "mocha",
         "coverage": "NODE_ENV=test c8 mocha test/*.test.js",
-        "doc": "jsdoc -c jsdoc.conf.json"
+        "doc": "jsdoc -c jsdoc.conf.json",
+        "lint": "eslint --format html index.mjs modules/*.mjs > eslint.html"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/liflab/dom-pp.git"
     },
-    "author": "Sylvain Hallé, Amadou Ba",
+    "author": "Sylvain Hallé, Amadou Ba, Papa Alioune Fall, Émile Perron",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/liflab/dom-pp/issues"
     },
     "homepage": "https://github.com/liflab/dom-pp",
     "devDependencies": {
+        "babel-eslint": "^10.1.0",
         "c8": "^7.4.0",
+        "eslint": "^7.19.0",
+        "eslint-config-standard": "^16.0.2",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
         "fs": "0.0.1-security",
         "global-jsdom": "7.0.0",
         "jsdoc": "^3.6.6",
@@ -30,6 +37,7 @@
     },
     "dependencies": {
         "chai": "^4.2.0",
+        "chai-colors": "^1.0.1",
         "chai-dom": "^1.8.2",
         "data-tree": "^1.2.4",
         "jest": "^26.6.3",

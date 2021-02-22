@@ -1,27 +1,27 @@
 /*
-  A lineage library for DOM nodes
-  MIT License
-  
-  Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
-  Eckinox Média and Université du Québec à Chicoutimi
-  
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-  
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+	A lineage library for DOM nodes
+	MIT License
+
+	Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
+	Eckinox Média and Université du Québec à Chicoutimi
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
 */
 
 // Local imports
@@ -61,7 +61,7 @@ class AtomicFunction extends AbstractFunction {
      * @return The resulting {@link Value}
      */
     compute() {
-        if (arguments.length != this.arity) {
+        if (arguments.length !== this.arity) {
             throw "Invalid number of arguments";
         }
         var args = [];
@@ -124,12 +124,12 @@ class AtomicFunctionReturnValue extends Value {
         return this.outputValue.toString();
     }
 
-    /*@Override*/
+    /* @Override */
     query(type, d, root, factory) {
         var leaves = [];
         var n = factory.getAndNode();
         for (var i = 0; i < this.inputValues.length; i++) {
-            if (this.inputValues[i] == null) {
+            if (this.inputValues[i] === null) {
                 continue;
             }
             var new_d = CompoundDesignator.create(d.tail(), new InputArgument(i));
@@ -140,7 +140,7 @@ class AtomicFunctionReturnValue extends Value {
             n.addChild(sub_root);
         }
         var f_root = factory.getObjectNode(d, this.referenceFunction);
-        if (n.getChildren().length == 1) {
+        if (n.getChildren().length === 1) {
             f_root.addChild(n.getChildren()[0]);
         } else {
             f_root.addChild(n);

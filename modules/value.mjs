@@ -1,20 +1,20 @@
 /*
   A lineage library for DOM nodes
   MIT License
-  
+
   Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
   Eckinox Média and Université du Québec à Chicoutimi
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in all
   copies or substantial portions of the Software.
-  
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,20 +32,22 @@ import { CompoundDesignator, Designator } from "./designator.mjs";
  * can be computed.
  */
 class Value {
-    constructor() {
-        // Nothing to do
-    }
+  /*
+  constructor() {
+    // Nothing to do
+  }
+  */
 
-    /**
+  /**
      * Gets the concrete value carried by this Value object.
      * @return The value
      */
-    getValue() {
-        // To be overridden by descendants
-        return null;
-    }
+  getValue() {
+    // To be overridden by descendants
+    return null;
+  }
 
-    /**
+  /**
      * Queries the provenance of a value.
      * @param type The type of lineage relationship
      * @param d A designator representing the part of the object that is the
@@ -55,22 +57,22 @@ class Value {
      * @param A factory to produce traceability nodes
      * @return The list of terminal traceability nodes produced by this query
      */
-    query(type, d, root, factory) {
-        // To be overridden by descendants
-    }
+  query(type, d, root, factory) {
+    // To be overridden by descendants
+  }
 
-    /**
+  /**
      * Converts an arbitrary object into a {@link Value}.
      * @param o The object to convert. If o is a {@link Value}, it is returned as
      * is. Otherwise, o is converted into a {@link ConstantValue} that returns o.
      * @return The converted value
      */
-    static lift(o) {
-        if (o instanceof Value) {
-            return o;
-        }
-        return new ConstantValue(o);
+  static lift(o) {
+    if (o instanceof Value) {
+      return o;
     }
+    return new ConstantValue(o);
+  }
 }
 
 /**
@@ -79,24 +81,24 @@ class Value {
  * @extends Value
  */
 class NaryValue extends Value {
-    /**
+  /**
      * Creates a new instance of this value.
      * @param {Object} value The value to produce
      * @param {Array} values An array of {@link Value}s that are linked to
      * this value
-     * @param {Array} positions An array of integers with the position of 
+     * @param {Array} positions An array of integers with the position of
      * each input value in the function's arguments
      */
-    constructor(value, values = [], positions = []) {
-        super();
-        this.value = value;
-        this.values = values;
-        this.positions = positions;
-    }
+  constructor(value, values = [], positions = []) {
+    super();
+    this.value = value;
+    this.values = values;
+    this.positions = positions;
+  }
 
-    getValue() {
-        return this.value;
-    }
+  getValue() {
+    return this.value;
+  }
 }
 
 /**
@@ -105,51 +107,53 @@ class NaryValue extends Value {
  * @extends Value
  */
 class ConstantValue extends Value {
-    constructor(o) {
-        super();
+  constructor(o) {
+    super();
 
-        /**
+    /**
          * The value represented by this constant
          */
-        this.value = o;
-    }
+    this.value = o;
+  }
 
-    query(q, d, root, factory) {
-        var leaves = [];
-        var new_d = CompoundDesignator.create(d, new ConstantDesignator());
-        var n = factory.getObjectNode(new_d, this.value);
-        root.addChild(n);
-        leaves.push(n);
-        return leaves;
-    }
+  query(q, d, root, factory) {
+    var leaves = [];
+    var new_d = CompoundDesignator.create(d, new ConstantDesignator());
+    var n = factory.getObjectNode(new_d, this.value);
+    root.addChild(n);
+    leaves.push(n);
+    return leaves;
+  }
 
-    getValue() {
-        return this.value;
-    }
+  getValue() {
+    return this.value;
+  }
 
-    toString() {
-        return this.value.toString();
-    }
+  toString() {
+    return this.value.toString();
+  }
 
-    equals(o) {
-        if (o == null || !(o instanceof Value)) {
-            return false;
-        }
-        return o.getValue() == this.value;
+  equals(o) {
+    if (o == null || !(o instanceof Value)) {
+      return false;
     }
+    return o.getValue() === this.value;
+  }
 }
 /**
  * Atomic designator that points to the value of a constant.
  * @extends Designator
  */
 class ConstantDesignator extends Designator {
-    constructor() {
-        super();
-    }
+  /*
+  constructor() {
+    super();
+  }
+  */
 
-    toString() {
-        return "Value";
-    }
+  toString() {
+    return "Value";
+  }
 }
 
 /**

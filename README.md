@@ -28,6 +28,14 @@ npm test
 npm run coverage
 ```
 
+## Code style
+
+```bash
+npm run lint
+```
+
+Will write a style report in `eslint.html` (not versioned).
+
 ## API Documentation
 
 The following command will generate or update the API documentatation and store
