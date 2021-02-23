@@ -87,66 +87,95 @@ function evaluateDom(root, conditions = []) {
  * @return A data tree explaining the violation of the condition if it
  * evaluates to <tt>false</tt>, and <tt>null</tt> if the condition is fulfilled.
  */
-function getVerdict(root, conditions = []) {
+function getVerdict(root, condition = []) {
     if (root === null) {
         return null;
     }
 
     // Create a "fake" data tree
     var tree = dataTree.create();
-    var n1 = tree.insert({
-        type: "OR"
-    });
+    // var n1 = tree.insert({
+    //     type: "OR"
+    // });
 
-    tree.insertToNode(n1, {
-        type: "object",
-        part: ["width"],
-        subject: "body[1]/section[2]/div[1]"
-    });
-    var n3 = tree.insertToNode(n1, {
-        type: "AND"
-    });
-    tree.insertToNode(n3, {
-        type: "object",
-        part: ["characters 2-10", "text"],
-        subject: "body[1]/div[2]"
-    });
-    var n5 = tree.insertToNode(n3, "OR");
-    tree.insertToNode(n5, {
-        type: "object",
-        part: ["value of"],
-        subject: "constant 100"
-    });
-    tree.insertToNode(n5, {
-        type: "object",
-        part: ["width"],
-        subject: "body[1]/section[2]/div[1]"
-    });
-    tree.insertToNode(n3, {
-        type: "object",
-        part: ["width"],
-        subject: "200",
-    });
+    // tree.insertToNode(n1, {
+    //     type: "object",
+    //     part: ["width"],
+    //     subject: "body[1]/section[2]/div[1]"
+    // });
+    // var n3 = tree.insertToNode(n1, {
+    //     type: "AND"
+    // });
+    // tree.insertToNode(n3, {
+    //     type: "object",
+    //     part: ["characters 2-10", "text"],
+    //     subject: "body[1]/div[2]"
+    // });
+    // var n5 = tree.insertToNode(n3, "OR");
+    // tree.insertToNode(n5, {
+    //     type: "object",
+    //     part: ["value of"],
+    //     subject: "constant 100"
+    // });
+    // tree.insertToNode(n5, {
+    //     type: "object",
+    //     part: ["width"],
+    //     subject: "body[1]/section[2]/div[1]"
+    // });
+    // tree.insertToNode(n3, {
+    //     type: "object",
+    //     part: ["width"],
+    //     subject: "constant 200",
+    // });
 
     ///////////////////////////////////////////////////////////////////////////
+    const verdict = condition.evaluate(root);
+    if (verdict.value === true) {
+        return null;
+    }
 
-    // //var cond1 = new TestCondition(root, conditions.toString())
-    //var cond1 = new TestCondition(tree._rootNode.data().type, conditions.toString());
-
-
-    var cond = new TestCondition(tree._currentNode.data().part.toString(), conditions.toString());
-    //const verdict = condition.evaluate(root);
-    var verdict = new Verdict(cond);
+    const obj = verdict.verdicts[0].value.inputList[0].path.toString()
     var witness = verdict.getWitness();
-    console.log(witness);
+    //console.log(witness);
+    //const trees = getTreeFromWitness(witness)
+    //console.log(trees)
 
-    // if (cond.name === cond.function) {
-    //     console.log('Yes')
-    // } else { console.log('No') }
+    for (const designatedObject of witness) {
+        let verdict = null;
+        const part = [];
+        let subject = obj
+        let lastPartType;
+        // First form
+        if (designatedObject.getObject().constructor.name === "HTMLBodyElement") {
+            let elements = designatedObject.getDesignator().elements
+            verdict = elements;
+            lastPartType = "Path";
+            for (const element of elements) {
+                if (element.constructor.name === lastPartType) {
+                    break;
+                }
+                part.push(element);
+            }
+            //part.push(elements);
+        } else if (designatedObject instanceof DesignatedObject) {
+            let elements = designatedObject.getObject();
+            verdict = elements
+            lastPartType = "ConstantDesignator";
+            part.push(lastPartType);
+        } else {
+            return null
+        }
 
-    // if (cond2.name === cond2.function) {
-    //     console.log('Yes')
-    // } else { console.log('No') }
+        var n1 = tree.insert({
+            verdict,
+            part,
+            subject
+        })
+        console.log(n1)
+    }
+
+
+
 
     /////////////////////////////////////////////////////////////////////////////
     return tree;
@@ -159,29 +188,36 @@ function getTreeFromWitness(witnesses = []) {
     for (const designatedObject of witnesses) {
         const part = [];
         let subject = null;
-        let elementAttribute = null;
+        ////let elementAttribute = null;
         let lastPartType;
         // First form
         if (designatedObject.getObject().constructor.name === "HTMLBodyElement") {
             const elements = designatedObject.getDesignator().elements;
             subject = elements[elements.length - 2].toString() || null;
-            elementAttribute = elements[elements.length - 3].toString() || null;
+            //elementAttribute = elements[elements.length - 3].toString() || null;
             lastPartType = "Path";
+            for (const element of elements) {
+                if (element.constructor.name === lastPartType) {
+                    break;
+                }
+                part.push(element);
+            }
         } else { // Second form
             subject = designatedObject.getObject();
             lastPartType = "ConstantDesignator";
+            part.push(lastPartType);
         }
         // Build the leaf's "part"
-        for (const element of designatedObject.getDesignator().elements) {
-            if (element.constructor.name === lastPartType) {
-                break;
-            }
-            part.push(element.toString());
-        }
+        // for (const element of designatedObject.getDesignator().elements) {
+        //     if (element.constructor.name === lastPartType) {
+        //         break;
+        //     }
+        //     part.push(element.toString());
+        // }
         tree.insert({
-            elementAttribute,
+            // elementAttribute,
             part,
-            subject
+            subject,
         });
     }
 
