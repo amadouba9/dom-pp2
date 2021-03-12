@@ -69,7 +69,8 @@ describe("Witness tests", () => {
         var witness = verdict.getWitness();
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
-        const trees = getTreeFromWitness(witness);
+        var tree = getTreeFromWitness(witness);
+        //console.log(tree);
     });
     it("Simple condition false", async() => {
         var f = new ComposedFunction(new GreaterThan(), "@0", 50);
@@ -85,7 +86,8 @@ describe("Witness tests", () => {
         var witness = verdict.getWitness();
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
-        const trees = getTreeFromWitness(witness);
+        var tree = getTreeFromWitness(witness);
+        //console.log(tree);
     });
     it("Test", async() => {
         var dom = await load_dom("./test/pages/stub-1.html");
@@ -99,7 +101,6 @@ describe("Witness tests", () => {
                 350
             )
         );
-
         var cond = new TestCondition("h2's width > 350", f);
         var driver = new TestDriver(cond);
         driver.evaluateAll(body);
@@ -112,11 +113,11 @@ describe("Witness tests", () => {
         var witness = verdict.getWitness();
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
-        const trees = getTreeFromWitness(witness);
-        //console.log(trees);
+        var tree = getTreeFromWitness(witness);
+        //console.log(tree);
+
     });
 });
-//////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Reads a DOM from a file. This function is only meant to avoid cluttering

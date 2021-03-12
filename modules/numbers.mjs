@@ -116,19 +116,29 @@ class Substraction extends AtomicFunction {
  * @extends AtomicFunction
  */
 class Multiplication extends AtomicFunction {
-    constructor(arity = 2) {
+    constructor(arity = 5) {
         super(arity);
     }
-
     getValue() {
-        var o1 = arguments[0];
-        var o2 = arguments[1];
-        if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+        var zero_values = [];
+        var zero_positions = []
+        var result = 1
+        for (var i = 0; i < this.arity; i++) {
+            var o = arguments[i];
+            if (typeof(o) !== "number") {
+                throw "Invalid argument type";
+            }
+            if (o === 0) {
+                zero_values.push(o)
+                zero_positions.push(i)
+                console.log(`Position of Zero is ${zero_positions}`)
+                return parseFloat(zero_values);
+            } else {
+                result *= o;
+            }
         }
-        return o1 * o2;
+        return parseFloat(result.toString())
     }
-
     toString() {
         return "Multiplication";
     }
@@ -265,6 +275,6 @@ class LesserOrEqual extends AtomicFunction {
 /**
  * Package exports
  */
-export { Addition, Substraction, Multiplication, Division, GreaterOrEqual, LesserOrEqual, GreaterThan, LesserThan, IsEqualTo };
+export { Addition, Substraction, Division, GreaterOrEqual, LesserOrEqual, GreaterThan, LesserThan, Multiplication, IsEqualTo };
 
 // :wrap=soft:tabSize=2:indentWidth=2:

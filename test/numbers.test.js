@@ -42,6 +42,7 @@ import {
     LesserOrEqual,
     Multiplication,
     Substraction,
+    AtomicFunctionReturnValue
 } from "../index.mjs";
 import { expect_to_throw } from "./test-util.mjs";
 
@@ -176,8 +177,10 @@ describe("Arithmetic function tests", () => {
     describe("Multiplying numbers", () => {
         it("Multiplication", () => {
             var f = new Multiplication();
-            var v = f.evaluate(5, 5);
-            expect(v.getValue()).to.be.equal(25);
+            var v = f.evaluate(1, 1, 1, 10, 1);
+            expect(v).to.be.an.instanceof(AtomicFunctionReturnValue);
+            expect(v.getValue()).to.be.equal(10);
+            console.log(v)
         });
         it("Not a number", () => {
             var f = new GreaterThan();

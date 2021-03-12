@@ -28,6 +28,7 @@
 import { CompoundDesignator } from "./designator.mjs";
 import { AbstractFunction, InputArgument, ReturnValue } from "./function.mjs";
 import { Value } from "./value.mjs";
+//import { NaryConjunctiveVerdict, NaryDisjunctiveVerdict } from "./booleans.mjs"
 
 /**
  * Function that performs a direct computation on its input arguments. This is
@@ -74,7 +75,6 @@ class AtomicFunction extends AbstractFunction {
         }
         return new AtomicFunctionReturnValue(this, o, ...arguments);
     }
-
     getValue() {
         // To be overridden by descendants
         return null;
