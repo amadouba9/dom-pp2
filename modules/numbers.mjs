@@ -26,6 +26,7 @@
 
 // Local imports
 import { AtomicFunction } from "./atomic-function.mjs";
+//import { Value } from "./value.mjs";
 
 /**
  * Function that checks the equality between two objects. Two objects o1 and o2
@@ -94,17 +95,20 @@ class Addition extends AtomicFunction {
  * @extends AtomicFunction
  */
 class Substraction extends AtomicFunction {
-    constructor(arity = 2) {
+    constructor(arity = 3) {
         super(arity);
     }
 
     getValue() {
-        var o1 = arguments[0];
-        var o2 = arguments[1];
-        if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+        var sub = arguments[0];
+        for (var i = 1; i < arguments.length; i++) {
+            var o = arguments[i];
+            if (typeof(o) !== "number") {
+                throw "Invalid argument type";
+            }
+            sub -= o
         }
-        return o1 - o2;
+        return sub;
     }
 
     toString() {
@@ -119,25 +123,35 @@ class Multiplication extends AtomicFunction {
     constructor(arity = 5) {
         super(arity);
     }
-    getValue() {
+    compute() {
+        if (arguments.length !== this.arity) {
+            throw "Invalid number of arguments";
+        }
         var zero_values = [];
         var zero_positions = []
         var result = 1
         for (var i = 0; i < this.arity; i++) {
-            var o = arguments[i];
+            var o = arguments[i].getValue();
             if (typeof(o) !== "number") {
                 throw "Invalid argument type";
             }
             if (o === 0) {
-                zero_values.push(o)
+                zero_values.push(arguments[i])
                 zero_positions.push(i)
-                console.log(`Position of Zero is ${zero_positions}`)
-                return parseFloat(zero_values);
             } else {
                 result *= o;
             }
         }
-        return parseFloat(result.toString())
+        return this.getZeroValue(zero_values, zero_positions, result);
+    }
+
+    getZeroValue(zero_values = [], zero_positions = [], result = null) {
+        if (zero_values.length === 0) {
+            return result;
+        } else {
+            console.log(`Position of the returned Zero is ${zero_positions} in the array`)
+            return parseFloat(zero_values);
+        }
     }
     toString() {
         return "Multiplication";
@@ -148,17 +162,20 @@ class Multiplication extends AtomicFunction {
  * @extends AtomicFunction
  */
 class Division extends AtomicFunction {
-    constructor(arity = 2) {
+    constructor(arity = 4) {
         super(arity);
     }
 
     getValue() {
-        var o1 = arguments[0];
-        var o2 = arguments[1];
-        if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+        var div = arguments[0];
+        for (var i = 1; i < arguments.length; i++) {
+            var o = arguments[i];
+            if (typeof(o) !== "number") {
+                throw "Invalid argument type";
+            }
+            div /= o
         }
-        return o1 / o2;
+        return div;
     }
 
     toString() {
@@ -183,7 +200,7 @@ class GreaterThan extends AtomicFunction {
         var o1 = arguments[0];
         var o2 = arguments[1];
         if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+            throw new Error(`Invalid argument type. GreaterThan expects both arguments to be numbers, but the following were received instead: ${typeof o1} (${JSON.stringify(o1)}) and ${typeof o2} (${JSON.stringify(o2)}).`);
         }
         return o1 > o2;
     }
@@ -209,7 +226,7 @@ class LesserThan extends AtomicFunction {
         var o1 = arguments[0];
         var o2 = arguments[1];
         if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+            throw new Error(`Invalid argument type. LesserThan expects both arguments to be numbers, but the following were received instead: ${typeof o1} (${JSON.stringify(o1)}) and ${typeof o2} (${JSON.stringify(o2)}).`);
         }
         return o1 < o2;
     }
@@ -236,7 +253,7 @@ class GreaterOrEqual extends AtomicFunction {
         var o1 = arguments[0];
         var o2 = arguments[1];
         if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+            throw new Error(`Invalid argument type. GreaterOrEqual expects both arguments to be numbers, but the following were received instead: ${typeof o1} (${JSON.stringify(o1)}) and ${typeof o2} (${JSON.stringify(o2)}).`);
         }
         return o1 >= o2;
     }
@@ -262,7 +279,7 @@ class LesserOrEqual extends AtomicFunction {
         var o1 = arguments[0];
         var o2 = arguments[1];
         if (typeof(o1) !== "number" || typeof(o2) !== "number") {
-            throw "Invalid argument type";
+            throw new Error(`Invalid argument type. LesserOrEqual expects both arguments to be numbers, but the following were received instead: ${typeof o1} (${JSON.stringify(o1)}) and ${typeof o2} (${JSON.stringify(o2)}).`);
         }
         return o1 <= o2;
     }

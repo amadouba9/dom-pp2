@@ -39,25 +39,11 @@ import { BooleanAnd, BooleanOr, BooleanNot, NaryConjunctiveVerdict, NaryDisjunct
 import { AndNode, Explainer, DesignatedObject, ObjectNode, OrNode, Tracer, UnknownNode } from "./modules/tracer.mjs";
 import { Addition, Substraction, Division, GreaterOrEqual, LesserOrEqual, GreaterThan, LesserThan, Multiplication, IsEqualTo } from "./modules/numbers.mjs";
 import { Enumerate, EnumeratedValue, NthItem } from "./modules/enumerate.mjs";
-import {
-    Argument,
-    ArgumentValue,
-    ComposedFunction,
-    ComposedFunctionValue,
-    FunctionNamedArgument,
-    NamedArgument,
-    NamedArgumentValue
-} from "./modules/composed-function.mjs";
-import {
-    ExistentialQuantifier,
-    Quantifier,
-    QuantifierConjunctiveVerdict,
-    QuantifierDisjunctiveVerdict,
-    QuantifierVerdict,
-    UniversalQuantifier
-} from "./modules/quantifier.mjs";
-import { BackgroundColor, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, MarginTop, MarginBottom, MarginLeft, MarginRight, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingLeft, PaddingRight, Position, Visibility, WebElementFunction } from "./modules/web-element.mjs";
+import { Argument, ArgumentValue, ComposedFunction, ComposedFunctionValue, FunctionNamedArgument, NamedArgument, NamedArgumentValue } from "./modules/composed-function.mjs";
+import { ExistentialQuantifier, Quantifier, QuantifierConjunctiveVerdict, QuantifierDisjunctiveVerdict, QuantifierVerdict, UniversalQuantifier } from "./modules/quantifier.mjs";
+import { BackgroundColor, BackgroundImage, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, MarginTop, MarginBottom, MarginLeft, MarginRight, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingLeft, PaddingRight, Position, Visibility, WebElementFunction, Zindex } from "./modules/web-element.mjs";
 import { TestCondition, TestDriver, TestResult, Verdict } from "./modules/verdict.mjs";
+import { isHtmlElement } from "./modules/util.mjs"
 
 /**
  * Evaluates a set of conditions on a DOM tree
@@ -107,14 +93,13 @@ function getTreeFromWitness(witnesses = []) {
     for (const designatedObject of witnesses) {
         const part = [];
         let subject = null;
-        //let elementAttribute = null;
+        let elementAttribute = null;
         let lastPartType;
         // First form
-        //if (designatedObject.getObject().constructor.name === "HTMLBodyElement") {
-        if (designatedObject instanceof DesignatedObject) {
+        if (isHtmlElement(designatedObject.getObject())) {
             const elements = designatedObject.getDesignator().elements;
             subject = elements[elements.length - 2].toString() || null;
-            //elementAttribute = [elements.length - 3].toString() || null;
+            elementAttribute = elements[elements.length - 3].toString() || null;
             lastPartType = "Path";
         }
         // Second form
@@ -122,7 +107,6 @@ function getTreeFromWitness(witnesses = []) {
             subject = designatedObject.getObject();
             lastPartType = "ConstantDesignator";
         }
-
         // Build the leaf's "part"
         for (const element of designatedObject.getDesignator().elements) {
             if (element.constructor.name === lastPartType) {
@@ -131,11 +115,10 @@ function getTreeFromWitness(witnesses = []) {
             part.push(element.toString());
         }
         tree.insert({
-            //elementAttribute,
+            elementAttribute,
             part,
             subject
         });
-        //console.log(designatedObject)
     }
     return tree;
 }
@@ -156,6 +139,7 @@ export {
     AtomicFunction,
     AtomicFunctionReturnValue,
     BackgroundColor,
+    BackgroundImage,
     BooleanAnd,
     BooleanNot,
     BooleanOr,
@@ -233,7 +217,8 @@ export {
     Value,
     Verdict,
     Visibility,
-    WebElementFunction
+    WebElementFunction,
+    Zindex
 };
 
 // :wrap=soft:tabSize=2:

@@ -159,7 +159,6 @@ describe("Boolean tests", () => {
         it("Second false argument", () => {
             var op = new BooleanAnd();
             var v = op.evaluate(true, false);
-            //console.log(v)
             expect(v).to.be.an.instanceof(NaryDisjunctiveVerdict);
             expect(v.getValue()).to.be.false;
             var t = new Tracer();

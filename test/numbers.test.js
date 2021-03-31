@@ -41,8 +41,7 @@ import {
     LesserThan,
     LesserOrEqual,
     Multiplication,
-    Substraction,
-    AtomicFunctionReturnValue
+    Substraction
 } from "../index.mjs";
 import { expect_to_throw } from "./test-util.mjs";
 
@@ -156,46 +155,26 @@ describe("Arithmetic function tests", () => {
             var v = f.evaluate(3, 3);
             expect(v.getValue()).to.be.equal(6);
         });
-        it("Not a number", () => {
-            var f = new Addition();
-            expect(() => {
-                f.evaluate(3, "foo");
-            }).to.throw;
-        });
     });
     describe("Substracting numbers", () => {
         it("Substraction", () => {
             var f = new Substraction();
-            var v = f.evaluate(10, 6);
-            expect(v.getValue()).to.be.equal(4);
-        });
-        it("Not a number", () => {
-            var f = new GreaterThan();
-            expect(expect_to_throw(f, "evaluate", 3)).to.be.true;
+            var v = f.evaluate(2, 0, 1);
+            expect(v.getValue()).to.be.equal(1);
         });
     });
     describe("Multiplying numbers", () => {
         it("Multiplication", () => {
             var f = new Multiplication();
-            var v = f.evaluate(1, 1, 1, 10, 1);
-            expect(v).to.be.an.instanceof(AtomicFunctionReturnValue);
-            expect(v.getValue()).to.be.equal(10);
-            console.log(v)
-        });
-        it("Not a number", () => {
-            var f = new GreaterThan();
-            expect(expect_to_throw(f, "evaluate", 3)).to.be.true;
+            var v = f.evaluate(1, 1, 1, 0, 1);
+            expect(v).to.be.equal(0);
         });
     });
     describe("Dividing numbers", () => {
         it("Division", () => {
             var f = new Division();
-            var v = f.evaluate(5, 5);
-            expect(v.getValue()).to.be.equal(1);
-        });
-        it("Not a number", () => {
-            var f = new GreaterThan();
-            expect(expect_to_throw(f, "evaluate", 3)).to.be.true;
+            var v = f.evaluate(60, 2, 2, 3);
+            expect(v.getValue()).to.be.equal(5);
         });
     });
 });

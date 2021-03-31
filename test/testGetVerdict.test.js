@@ -16,14 +16,7 @@ const { dataTree } = pkg_datatree;
 
 // Local imports
 import { getVerdict } from "../index.mjs";
-import {
-    ComposedFunction,
-    DimensionWidth,
-    FindBySelector,
-    GreaterThan,
-    TestCondition,
-    UniversalQuantifier,
-} from "../index.mjs";
+import { ComposedFunction, DimensionWidth, FindBySelector, GreaterThan, TestCondition, UniversalQuantifier } from "../index.mjs";
 
 describe("Test getVerdict return", () => {
     it("True condition on a page element", async() => {
@@ -40,7 +33,6 @@ describe("Test getVerdict return", () => {
         );
         var cond = new TestCondition("h2's width > 50", f);
         var tree = getVerdict(body, cond);
-        //console.log(tree);
     });
     it("False condition on a page element", async() => {
         var dom = await load_dom("./test/pages/stub-1.html");
@@ -56,7 +48,6 @@ describe("Test getVerdict return", () => {
         );
         var cond = new TestCondition("h2's width > 350", f);
         var tree = getVerdict(body, cond);
-        //console.log(tree)
     });
 });
 

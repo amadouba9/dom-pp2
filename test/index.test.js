@@ -70,7 +70,6 @@ describe("Witness tests", () => {
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
         var tree = getTreeFromWitness(witness);
-        //console.log(tree);
     });
     it("Simple condition false", async() => {
         var f = new ComposedFunction(new GreaterThan(), "@0", 50);
@@ -87,7 +86,6 @@ describe("Witness tests", () => {
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
         var tree = getTreeFromWitness(witness);
-        //console.log(tree);
     });
     it("Test", async() => {
         var dom = await load_dom("./test/pages/stub-1.html");
@@ -114,8 +112,6 @@ describe("Witness tests", () => {
         expect(Array.isArray(witness)).to.be.true;
         expect(witness.length).to.equal(2);
         var tree = getTreeFromWitness(witness);
-        //console.log(tree);
-
     });
 });
 

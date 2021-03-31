@@ -1,0 +1,39 @@
+## ------------
+## All of gitignore
+
+*~
+*.tmp
+*.bak
+\#*
+
+# NodeJS specific #
+.nyc_output/
+coverage/
+node_modules/
+npm-debug.log
+package-lock.json
+test/*.log
+
+.vscode/
+coverage/
+workspace.code-workspace
+
+# ESLint HTML report
+eslint.html
+
+# Sylvain's script to count lines
+lines.sh
+## ------------
+
+# Auto-generated doc
+docs/*
+
+# Tests
+test/*
+
+# Dev files
+.jshintrc
+.travis.yml
+jsdoc.conf.json
+.eslintrc.json
+.nycrc.json

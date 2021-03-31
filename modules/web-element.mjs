@@ -120,9 +120,31 @@ class ElementAttributeValue extends Value {
  * @extends WebElementFunction
  */
 class CssPropertyFunction extends WebElementFunction {
+    constructor(name, returnType = null) {
+        if (["float", "int", "string", null].indexOf(returnType) == -1) {
+            throw new Error(`CssPropertyFunction returnType expects one of the following values: "float", "int", "string", null. Received ${returnType} instead.`);
+        }
+
+        super(name);
+        this.returnType = returnType;
+    }
+
     get(element) {
         const style = this.getElementComputedStyle(element);
-        return style.getPropertyValue(this.name);
+        const value = style.getPropertyValue(this.name);
+
+        switch (this.returnType) {
+            case "float":
+                return parseFloat(value);
+
+            case "int":
+                return parseInt(value);
+
+            case "string":
+                return typeof value == "string" ? value : value.toString();
+        }
+
+        return value;
     }
 }
 
@@ -140,8 +162,7 @@ class DimensionWidth extends WebElementFunction {
     }
 
     get(element) {
-        var win = this.getOwnerWindow(element)
-        return parseFloat(win.getComputedStyle(element).getPropertyValue('width'))
+        return element.offsetWidth;
     }
 }
 
@@ -156,10 +177,9 @@ class DimensionHeight extends WebElementFunction {
     constructor() {
         super("height");
     }
+
     get(element) {
-        var doc = element.ownerDocument;
-        var win = doc.defaultView || doc.parentWindow;
-        return parseFloat(win.getComputedStyle(element).getPropertyValue('height'))
+        return element.offsetHeight;
     }
 }
 /**
@@ -195,7 +215,7 @@ class Color extends CssPropertyFunction {
  */
 class Opacity extends CssPropertyFunction {
     constructor() {
-        super("opacity")
+        super("opacity", "float");
     }
 }
 /**
@@ -216,7 +236,7 @@ class BackgroundColor extends CssPropertyFunction {
  */
 class MarginTop extends CssPropertyFunction {
     constructor() {
-        super("margin-top")
+        super("margin-top", "float")
     }
 }
 /**
@@ -355,6 +375,25 @@ class Float extends CssPropertyFunction {
     }
 }
 /**
+ * Function that extract flottant elemnt of DOM
+ * @extends CssPropertyFunction
+ */
+class BackgroundImage extends CssPropertyFunction {
+    constructor() {
+        super("background-image")
+    }
+}
+
+/**
+ * Function that extract Z-index
+ * @extends CssPropertyFunction
+ */
+class Zindex extends CssPropertyFunction {
+    constructor() {
+        super("z-index", "float")
+    }
+}
+/**
  * Designator that points to an element in a DOM tree based on
  * an XPath expression.
  * @extends Designator
@@ -455,6 +494,6 @@ class FindBySelector extends Enumerate {
 /**
  * Package exports
  */
-export { BackgroundColor, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, MarginTop, MarginBottom, MarginRight, MarginLeft, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingRight, PaddingLeft, Position, Visibility, WebElementFunction };
+export { BackgroundColor, BackgroundImage, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, MarginTop, MarginBottom, MarginRight, MarginLeft, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingRight, PaddingLeft, Position, Visibility, WebElementFunction, Zindex };
 
 // :wrap=soft:tabSize=2:indentWidth=2:

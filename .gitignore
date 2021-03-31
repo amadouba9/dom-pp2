@@ -2,6 +2,7 @@
 *.tmp
 *.bak
 \#*
+.DS_Store
 
 # NodeJS specific #
 .nyc_output/
@@ -13,6 +14,7 @@ test/*.log
 
 .vscode/
 coverage/
+workspace.code-workspace
 
 # ESLint HTML report
 eslint.html

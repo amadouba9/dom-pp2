@@ -41,7 +41,7 @@ import "jsdom-global";
 import {
     ComposedFunction,
     CompoundDesignator,
-    DimensionWidth,
+    Opacity,
     FindBySelector,
     GreaterThan,
     TestCondition,
@@ -89,10 +89,10 @@ describe("Verdict tests", () => {
         var h2 = dom.window.document.querySelector("#h2");
         var f = new ComposedFunction(
             new GreaterThan(),
-            new ComposedFunction(new DimensionWidth(), "@0"),
-            50
+            new ComposedFunction(new Opacity(), "@0"),
+            0.9
         );
-        var cond = new TestCondition("h2's width > 50", f);
+        var cond = new TestCondition("h2's opacity > 0.9", f);
         var driver = new TestDriver(cond);
         driver.evaluateAll(h2);
         var result = driver.getResult();
@@ -107,7 +107,7 @@ describe("Verdict tests", () => {
         var dob1 = witness[0];
         expect(dob1.getObject().constructor.name).to.equal("HTMLHeadingElement");
         var dob2 = witness[1];
-        expect(dob2.getObject()).to.equal(50);
+        expect(dob2.getObject()).to.equal(0.9);
     });
 
     it("True condition on a page element", async() => {
@@ -118,11 +118,11 @@ describe("Verdict tests", () => {
             new FindBySelector("#h2"),
             new ComposedFunction(
                 new GreaterThan(),
-                new ComposedFunction(new DimensionWidth(), "$x"),
-                50
+                new ComposedFunction(new Opacity(), "$x"),
+                0.9
             )
         );
-        var cond = new TestCondition("h2's width > 50", f);
+        var cond = new TestCondition("h2's opacity > 0.9", f);
         var driver = new TestDriver(cond);
         driver.evaluateAll(body);
         var result = driver.getResult();
@@ -139,7 +139,7 @@ describe("Verdict tests", () => {
         var dob1_d = dob1.getDesignator();
         expect(dob1_d).to.be.an.instanceof(CompoundDesignator);
         var dob2 = witness[1];
-        expect(dob2.getObject()).to.equal(50);
+        expect(dob2.getObject()).to.equal(0.9);
     });
 
     it("False condition on a page element", async() => {
@@ -150,11 +150,11 @@ describe("Verdict tests", () => {
             new FindBySelector("#h2"),
             new ComposedFunction(
                 new GreaterThan(),
-                new ComposedFunction(new DimensionWidth(), "$x"),
-                1350
+                new ComposedFunction(new Opacity(), "$x"),
+                1
             )
         );
-        var cond = new TestCondition("h2's width > 350", f);
+        var cond = new TestCondition("h2's opacity > 1", f);
         var driver = new TestDriver(cond);
         driver.evaluateAll(body);
         var result = driver.getResult();
@@ -176,7 +176,7 @@ describe("Verdict tests", () => {
         expect(dob1_d).to.be.an.instanceof(CompoundDesignator);
         var dob2 = witness[1];
         //console.log(dob2);
-        expect(dob2.getObject()).to.equal(1350);
+        expect(dob2.getObject()).to.equal(1);
     });
 });
 
