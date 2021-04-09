@@ -191,6 +191,18 @@ class UniversalQuantifier extends Quantifier {
     set(variable, value) {
         return new UniversalQuantifier(this.variable, this.domain.set(variable, value), this.phi.set(variable, value));
     }
+    static deserialize(d, j) {
+        var instance = new this(j.contents[0], j.contents[1].contents[0], j.contents[2]);
+        //return instance;
+        //var instance = new this();
+        var descendant = []
+        var getDescendants = instance.extractJSON(j, descendant)
+        for (const descendant in getDescendants) {
+            //we can obtain j' with descendants[d] 
+            d.deserialize(getDescendants[descendant]);
+        }
+        return instance
+    }
 }
 
 /**

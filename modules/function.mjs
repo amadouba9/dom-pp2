@@ -1,33 +1,33 @@
 /*
-  A lineage library for DOM nodes
-  MIT License
+	A lineage library for DOM nodes
+	MIT License
 
-  Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
-  Eckinox Média and Université du Québec à Chicoutimi
+	Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
+	Eckinox Média and Université du Québec à Chicoutimi
 
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
 
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
 */
 
 // Local imports
 import { Designator } from "./designator.mjs";
 import { Value } from "./value.mjs";
-
+//import { extractJSON } from "./extractJson.mjs";
 /**
  * Abstract class representing a function.
  */
@@ -84,6 +84,61 @@ class AbstractFunction {
         }
         return o == this;
     }
+
+    // d is a deserializer and j is a JSON structure
+    static deserialize(d, j) {
+            var instance = new this();
+            var descendant = []
+            var getDescendants = instance.extractJSON(j, descendant)
+            for (const descendant in getDescendants) {
+                //we can obtain j' with descendants[d] 
+                d.deserialize(getDescendants[descendant]);
+            }
+            return instance
+        }
+        //this method will return all descendant of json structure
+    extractJSON(obj, descendant = []) {
+            for (const i in obj) {
+                if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+                    if (obj[i].name != undefined) {
+                        descendant.push(obj[i])
+                    }
+                    //this.extractJSON(obj[i], descendant);
+                }
+            }
+            return descendant;
+        }
+        //////////////////////////
+
+    // d is a deserializer and j is a JSON structure
+    // static deserialize(d, j) {
+    //         var instance = new this();
+    //         //var getDescendants = this.constructor.extractJSON(j, descendant = [])
+    //         for (const descendant in getDescendants) {
+    //             //we can obtain j' with descendants[d] 
+    //             d.deserialize(getDescendants[descendant]);
+    //         }
+    //         return instance
+    //     }
+    // static deserialize(d, j) {
+    //         // var instance = new this();
+    //         var descendant;
+    //         var getDescendants = extractJSON(j, descendant = [], true);
+    //         var instance = new this(getDescendants[0].contents[0], getDescendants[1].name, getDescendants[2].contents);
+    //         return instance;
+    //     }
+    //     //this method will return all descendant of json structure
+    // extractJSON(obj, descendant = []) {
+    //     for (const i in obj) {
+    //         if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+    //             if (obj[i].name != undefined) {
+    //                 descendant.push(obj[i])
+    //             }
+    //             descendant = extractJSON(obj[i], descendant);
+    //         }
+    //     }
+    //     return descendant;
+    // }
 }
 
 /**

@@ -192,6 +192,15 @@ class FontSize extends CssPropertyFunction {
     }
 }
 /**
+ * Function that extracts the font size.
+ * @extends CssPropertyFunction
+ */
+class FontWeight extends CssPropertyFunction {
+    constructor() {
+        super("font-weight")
+    }
+}
+/**
  * Function that extracts the font family
  * @extends CssPropertyFunction
  */
@@ -494,6 +503,6 @@ class FindBySelector extends Enumerate {
 /**
  * Package exports
  */
-export { BackgroundColor, BackgroundImage, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, MarginTop, MarginBottom, MarginRight, MarginLeft, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingRight, PaddingLeft, Position, Visibility, WebElementFunction, Zindex };
+export { BackgroundColor, BackgroundImage, BorderColor, BorderRadius, BorderStyle, BorderWidth, CssPropertyFunction, Color, DimensionHeight, DimensionWidth, Display, ElementAttribute, ElementAttributeValue, FindBySelector, Float, FontFamily, FontSize, FontWeight, MarginTop, MarginBottom, MarginRight, MarginLeft, Opacity, Path, PathValue, PaddingTop, PaddingBottom, PaddingRight, PaddingLeft, Position, Visibility, WebElementFunction, Zindex };
 
 // :wrap=soft:tabSize=2:indentWidth=2:

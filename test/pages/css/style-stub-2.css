@@ -14,3 +14,58 @@ h1 { color: red; }
     padding-right: 50px;
     padding-left: 50px;
 }*/
+
+* {
+    opacity: 1;
+}
+
+h1 {
+    color: red;
+}
+
+h1.heading {
+    color: green;
+}
+
+.title {
+    font-size: 30px;
+    font-family: cursive;
+}
+
+.testElem {
+    background-color: blue;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-right: 50px;
+    padding-left: 50px;
+    border-style: solid;
+    border-color: red;
+    border-width: 10px;
+    border-radius: 10px;
+}
+
+.displayElem {
+    width: 30%;
+    display: inline-block;
+}
+
+#dispVisiblity {
+    visibility: hidden;
+}
+
+#titlePositionDisp {
+    position: relative;
+    opacity: 1;
+}
+
+#rightContent {
+    float: right;
+}
+
+#leftContent {
+    float: left;
+}

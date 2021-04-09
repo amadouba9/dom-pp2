@@ -28,6 +28,12 @@
  * Imports
  */
 
+// JSDOM for DOM trees
+import pkg_jsdom from "jsdom";
+const { JSDOM } = pkg_jsdom;
+import "jsdom-global";
+
+
 // Chai for assertions
 import pkg_chai from "chai";
 const { expect } = pkg_chai;
@@ -48,6 +54,7 @@ import {
     CompoundDesignator,
     ComposedFunction,
     ConstantDesignator,
+    ConstantFunction,
     DimensionHeight,
     Display,
     DimensionWidth,
@@ -57,6 +64,7 @@ import {
     Float,
     FontFamily,
     FontSize,
+    FontWeight,
     GreaterOrEqual,
     MarginTop,
     MarginBottom,
@@ -79,8 +87,16 @@ import {
 } from "../index.mjs";
 import { Opacity } from "../modules/web-element.mjs";
 import { getVerdict } from "../index.mjs";
+import { IsEqualTo } from "../index.mjs";
 let stub1Page, stub2Page, mb3dPage;
 mb3dPage = await load_file_in_puppeteer("./test/pages/mb3d/index.html");
+
+// /////////// Extra imports for the reading of css files//////////////////////////////////
+import * as fs from 'fs'
+import * as path from 'path'
+const __dirname = path.dirname(new URL(
+    import.meta.url).pathname);
+// /////////// End Extra ///////////////////
 
 describe("Web element tests", () => {
     before(async function() {
@@ -211,7 +227,6 @@ describe("Web element tests", () => {
             expect(v).to.be.an.instanceOf(ElementAttributeValue)
             var h = v.getValue()
             expect(h).to.equal("green")
-                //expect(h).to.equal('rgb(' + 0 + ',' + 128 + ',' + 0 + ')')
         });
         it("Check background-color", async() => {
             var dom = await load_dom("./test/pages/stub-2.html")
@@ -394,6 +409,10 @@ describe("Web element tests", () => {
     })
 
     describe("Testing bugs on MB3D", () => {
+        const dom = fs.readFileSync('./test/pages/mb3d/index.html', 'utf-8')
+        const url = `file://${__dirname}/pages/mb3d/index.html`
+        const { window } = new JSDOM(dom, { resources: 'usable', url: url })
+        const { document } = window
         it("Check navbar Position is fixed", async() => {
             // This is based on a 1920px wide resolution
             const h = await mb3dPage.evaluate(function() {
@@ -405,15 +424,7 @@ describe("Web element tests", () => {
             });
             expect(h).to.equal("fixed");
         });
-        // it("Check navbar Position is fixed", async() => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var positionNavbar = document.querySelector(".navbar-container")
-        //     var f = new Position()
-        //     var v = f.evaluate(positionNavbar)
-        //     expect(v).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h = v.getValue()
-        //     expect(h).to.equal("fixed")
-        // })
+
         it("Check background-color of footer", async() => {
             // This is based on a 1920px wide resolution
             const h = await mb3dPage.evaluate(function() {
@@ -425,15 +436,6 @@ describe("Web element tests", () => {
             });
             expect(h).to.equal("rgb(255, 255, 255)");
         });
-        // it("Check background-color of footer", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var footerBgColor = document.querySelector(".footer")
-        //     var f = new BackgroundColor()
-        //     var v = f.evaluate(footerBgColor)
-        //     expect(v).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h = v.getValue()
-        //     expect(h).to.equal("rgb(255, 255, 255)")
-        // })
         it("Check color of body class", async() => {
             // This is based on a 1920px wide resolution
             const h = await mb3dPage.evaluate(function() {
@@ -445,15 +447,7 @@ describe("Web element tests", () => {
             });
             expect(h).to.equal("rgb(29, 29, 27)");
         });
-        // it("Check color of body class", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var bodyColor = document.querySelector(".body")
-        //     var f = new Color()
-        //     var v = f.evaluate(bodyColor)
-        //     expect(v).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h = v.getValue()
-        //     expect(h).to.equal("rgb(29, 29, 27)")
-        // })
+
 
         it("Check if background-color and color of body as same", async() => {
             // This is based on a 1920px wide resolution
@@ -475,23 +469,6 @@ describe("Web element tests", () => {
 
             expect(h1).to.not.equal(h2);
         });
-        // it("Check if background-color and color of body as same", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var bodyColor = document.querySelector("body")
-        //         //instance of Color
-        //     var f1 = new Color()
-        //     var v1 = f1.evaluate(bodyColor)
-        //     expect(v1).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h1 = v1.getValue()
-
-        //     //instance of Background-Color
-        //     var f2 = new BackgroundColor()
-        //     var v2 = f2.evaluate(bodyColor)
-        //     expect(v2).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h2 = v2.getValue()
-        //         //get result
-        //     expect(h1).to.not.equal(h2)
-        // })
 
         it("Check alignement of Menu", async() => {
             // This is based on a 1920px wide resolution
@@ -504,62 +481,7 @@ describe("Web element tests", () => {
             });
             expect(h).to.equal("flex");
         });
-        // it("Check alignement of Menu", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var navbarDisplay = document.querySelector(".nav-menu")
-        //     var f = new Display()
-        //     var v = f.evaluate(navbarDisplay)
-        //     expect(v).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h = v.getValue()
-        //     expect(h).to.equal("flex")
 
-        // })
-
-        ////////////////////////////////////////////////
-        it("Implement bug z-index", async() => {
-            // This is based on a 1920px wide resolution
-            const h = await mb3dPage.evaluate(function() {
-                var navbarZindex = document.querySelector(".navbar-container");
-                var f = new dompp.Zindex();
-                var v = f.evaluate(navbarZindex);
-                var h = v.getValue();
-                return h;
-            });
-            expect(h).to.equal(100);
-        });
-        // it("Implement bug z-index", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        //     var navbarZindex = document.querySelector(".navbar-container")
-        //     var f = new Zindex()
-        //     var v = f.evaluate(navbarZindex)
-        //     expect(v).to.be.an.instanceOf(ElementAttributeValue)
-        //     var h = v.getValue()
-        //     expect(h).to.equal(100)
-        // })
-        ////////////////////////////////////////////////////////////////
-        // // it("Check if the text in a section is visible", async() => {
-        // //     //var dom = await load_dom("./test/pages/mb3d/index.html")
-        // //     var navbar = document.querySelector('container-plan')
-        // //     var f1 = new BackgroundColor()
-        // //     var v1 = f1.evaluate(navbar)
-        // //     console.log(v1)
-        // //     expect(v1).to.be.an.instanceOf(ElementAttributeValue)
-        // //     var h1 = v1.getValue()
-        // //         //console.log(h1)
-        // //     var navbar2 = document.querySelector(".text-block")
-        // //     console.log(navbar2)
-        // //     var f2 = new Color()
-        // //     var v2 = f2.evaluate(navbar2)
-        // //     console.log(v2)
-        // //     expect(v2).to.be.an.instanceOf(ElementAttributeValue)
-        // //     var h2 = v2.getValue()
-        // //     console.log(h2)
-        // //     expect(h1).to.not.equal(h2)
-        // //         // console.log("========================");
-        // //         // console.log(h1);
-        // //         // console.log(h2);
-        // //         // expect(h1).to.equal(h2)
-        // // })
         it("Implement bug z-index", async() => {
             // This is based on a 1920px wide resolution
             const h = await mb3dPage.evaluate(function() {
@@ -572,99 +494,104 @@ describe("Web element tests", () => {
             expect(h).to.equal(100);
         });
 
-        it("False condition of Zindex on a page element", async() => {
-            // const h = await mb3dPage.evaluate(function() {
-            //     var navbarZindex = document.querySelector(".navbar-container");
-            //     var f = new dompp.Zindex();
-            //     var v = f.evaluate(navbarZindex);
-            //     var h = v.getValue();
-            //     return h;
-            // });
-            var body = mb3dPage.content
-                //var body = await page.evaluate(() => { return (document.querySelectorAll(".navbar-container")) })
-            console.log(body)
+        it("False condition of Zindex on a page element", () => {
+            //var dom = await load_dom("./test/pages/mb3d/index.html");
+            var body = document.body;
             var f = new UniversalQuantifier(
                 "$x",
                 new FindBySelector(".navbar-container"),
                 new ComposedFunction(
-                    new GreaterOrEqual(),
+                    new IsEqualTo(),
                     new ComposedFunction(new Zindex(), "$x"),
-                    100
+                    10
                 )
             );
             var cond = new TestCondition("navbar container's z-index > 100", f);
-            console.log(cond);
             var tree = getVerdict(body, cond);
             console.log(tree);
         });
-        // it("False condition of Zindex on a page element", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html");
-        //     var body = document.body;
-        //     var f = new UniversalQuantifier(
-        //         "$x",
-        //         new FindBySelector(".navbar-container"),
-        //         new ComposedFunction(
-        //             new GreaterOrEqual(),
-        //             new ComposedFunction(new Zindex(), "$x"),
-        //             100
-        //         )
-        //     );
-        //     var cond = new TestCondition("navbar container's z-index > 100", f);
-        //     var tree = getVerdict(body, cond);
-        //     //console.log(tree);
-        // });
-        // it("Condition of Font Weight on a page element", () => {
-        //     //var dom = await load_dom("./test/pages/dev/about.html");
-        //     var body = document.body;
-        //     var f = new UniversalQuantifier(
-        //         "$x",
-        //         new FindBySelector(".main-nav"),
-        //         new ComposedFunction(
-        //             new IsEqualTo(),
-        //             new ComposedFunction(new FontWeight(), "$x"),
-        //             new ConstantFunction('lighter')
-        //         )
-        //     );
+        it("Condition of Font Weight on a page element", () => {
+            //var dom = await load_dom("./test/pages/dev/about.html");
+            var body = document.body;
+            var f = new UniversalQuantifier(
+                "$x",
+                new FindBySelector(".main-nav"),
+                new ComposedFunction(
+                    new IsEqualTo(),
+                    new ComposedFunction(new FontWeight(), "$x"),
+                    new ConstantFunction('lighter')
+                )
+            );
 
-        //     var cond = new TestCondition("body's Font Weight != lighter", f);
-        //     var tree = getVerdict(body, cond);
-        //     //console.log(tree);
-        // });
-        // it("Condition of Display on a page element", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html");
-        //     var body = document.body;
-        //     var f = new UniversalQuantifier(
-        //         "$x",
-        //         new FindBySelector(".nav-menu"),
-        //         new ComposedFunction(
-        //             new IsEqualTo(),
-        //             new ComposedFunction(new Display(), "$x"),
-        //             new ConstantFunction('flex')
-        //         )
-        //     );
-        //     var cond = new TestCondition("Nav menu's Display", f);
-        //     var tree = getVerdict(body, cond);
-        //     //console.log(tree);
-        // });
-        // it("Condition of footer Background color ", () => {
-        //     //var dom = await load_dom("./test/pages/mb3d/index.html");
-        //     var body = document.body;
-        //     var f = new UniversalQuantifier(
-        //         "$x",
-        //         new FindBySelector(".footer"),
-        //         new ComposedFunction(
-        //             new IsEqualTo(),
-        //             new ComposedFunction(new BackgroundColor(), "$x"),
-        //             new ConstantFunction("rgb(255, 255, 255)")
-        //         )
-        //     );
-        //     var cond = new TestCondition("Footer's Background Color", f);
-        //     var tree = getVerdict(body, cond);
-        //     //console.log(tree);
-        // });
+            var cond = new TestCondition("body's Font Weight != lighter", f);
+            var tree = getVerdict(body, cond);
+            //console.log(tree);
+        });
+        it("Condition of Display on a page element", () => {
+            //var dom = await load_dom("./test/pages/mb3d/index.html");
+            var body = document.body;
+            var f = new UniversalQuantifier(
+                "$x",
+                new FindBySelector(".nav-menu"),
+                new ComposedFunction(
+                    new IsEqualTo(),
+                    new ComposedFunction(new Display(), "$x"),
+                    new ConstantFunction('flex')
+                )
+            );
+            var cond = new TestCondition("Nav menu's Display", f);
+            var tree = getVerdict(body, cond);
+            //console.log(tree);
+        });
+        it("Condition of footer Background color ", () => {
+            //var dom = await load_dom("./test/pages/mb3d/index.html");
+            var body = document.body;
+            var f = new UniversalQuantifier(
+                "$x",
+                new FindBySelector(".footer"),
+                new ComposedFunction(
+                    new IsEqualTo(),
+                    new ComposedFunction(new BackgroundColor(), "$x"),
+                    new ConstantFunction("rgb(255, 255, 255)")
+                )
+            );
+            var cond = new TestCondition("Footer's Background Color", f);
+            var tree = getVerdict(body, cond);
+            //console.log(tree);
+        });
 
     });
 
+    describe("test viewport with puppeter on mb3dPage", () => {
+        //let x = mb3dPage.setViewport({ width: 991, height: 800 })
+        it("Check navbar display wiewport ", async() => {
+            //mb3d web-page have a  @media screen value max-width:991
+            mb3dPage.setViewport({ width: 991, height: 800 })
+            const h = await mb3dPage.evaluate(function() {
+                var displayNav = document.querySelector(".w-nav-button");
+                var f = new dompp.Display();
+                var v = f.evaluate(displayNav);
+                var h = v.getValue();
+                return h;
+            });
+            expect(h).to.equal("block");
+            //reset mb3dpage viewport
+            mb3dPage.setViewport({ width: 1920, height: 1080 })
+        });
+
+        it("Check pupputer viewport's width is greater than or equal to body's width ", async() => {
+            //var widthpup = mb3dPage.viewport().width //get the viewport's width
+            const w = await mb3dPage.evaluate(function() {
+                var body = document.querySelector(".body");
+                var f = new dompp.DimensionWidth();
+                var v = f.evaluate(body);
+                var h = v.getValue();
+                return h;
+            });
+            //this assertion test body's width is less than or equal to the viewport's width
+            expect(w).to.be.at.most(mb3dPage.viewport().width)
+        });
+    });
 
     after(async function() {
         await terminate_puppeteer_browser();
