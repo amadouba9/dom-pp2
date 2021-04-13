@@ -1342,6 +1342,54 @@ class NthItem extends _designator_mjs__WEBPACK_IMPORTED_MODULE_1__.Designator {
 
 /***/ }),
 
+/***/ "./modules/extractJSON.mjs":
+/*!*********************************!*\
+  !*** ./modules/extractJSON.mjs ***!
+  \*********************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "extractJSON": () => (/* binding */ extractJSON)
+/* harmony export */ });
+// //this method will return all descendant of json structure
+// function extractJSON(obj, descendant = []) {
+//     for (const i in obj) {
+//         if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+//             if (obj[i].name != undefined) {
+//                 descendant.push(obj[i])
+//             }
+//             descendant = extractJSON(obj[i], descendant);
+//         }
+//     }
+//     return descendant;
+// }
+// export { extractJSON }
+//this method will return all descendant of json structure
+function extractJSON(obj, descendant, isFirstIteration) {
+  for (const i in obj) {
+    if (isFirstIteration === true) {
+      descendant.push(obj);
+      isFirstIteration = false;
+    }
+
+    if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+      if (obj[i].name != undefined) {
+        descendant.push(obj[i]);
+      }
+
+      descendant = extractJSON(obj[i], descendant, false);
+    }
+  }
+
+  return descendant;
+}
+
+
+
+/***/ }),
+
 /***/ "./modules/function.mjs":
 /*!******************************!*\
   !*** ./modules/function.mjs ***!
@@ -1361,32 +1409,33 @@ __webpack_require__.r(__webpack_exports__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*
-  A lineage library for DOM nodes
-  MIT License
+	A lineage library for DOM nodes
+	MIT License
 
-  Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
-  Eckinox Média and Université du Québec à Chicoutimi
+	Copyright (c) 2020-2021 Amadou Ba, Sylvain Hallé
+	Eckinox Média and Université du Québec à Chicoutimi
 
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
 
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
 */
 // Local imports
 
+ //import { extractJSON } from "./extractJson.mjs";
 
 /**
  * Abstract class representing a function.
@@ -1448,7 +1497,76 @@ class AbstractFunction {
     }
 
     return o == this;
-  }
+  } // d is a deserializer and j is a JSON structure
+  // static deserialize(d, j) {
+  //         var instance = new this();
+  //         var descendant = []
+  //         var getDescendants = instance.extractJSON(j, descendant)
+  //         for (const descendant in getDescendants) {
+  //             //we can obtain j' with descendants[d] 
+  //             d.deserialize(getDescendants[descendant]);
+  //         }
+  //         return instance
+  //     }
+
+
+  static deserialize(d, j) {
+    const params = [];
+
+    for (const serializedParam of j.contents) {
+      if (typeof serializedParam == "object" && Object.keys(serializedParam).length == 2 && typeof serializedParam.name != "undefined" && typeof serializedParam.contents != "undefined") {
+        params.push(d.deserialize(serializedParam));
+      } else {
+        params.push(serializedParam);
+      }
+    }
+
+    return new this(...params);
+  } //this method will return all descendant of json structure
+
+
+  extractJSON(obj, descendant = []) {
+    for (const i in obj) {
+      if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+        if (obj[i].name != undefined) {
+          descendant.push(obj[i]);
+        } //this.extractJSON(obj[i], descendant);
+
+      }
+    }
+
+    return descendant;
+  } //////////////////////////
+  // d is a deserializer and j is a JSON structure
+  // static deserialize(d, j) {
+  //         var instance = new this();
+  //         //var getDescendants = this.constructor.extractJSON(j, descendant = [])
+  //         for (const descendant in getDescendants) {
+  //             //we can obtain j' with descendants[d] 
+  //             d.deserialize(getDescendants[descendant]);
+  //         }
+  //         return instance
+  //     }
+  // static deserialize(d, j) {
+  //         // var instance = new this();
+  //         var descendant;
+  //         var getDescendants = extractJSON(j, descendant = [], true);
+  //         var instance = new this(getDescendants[0].contents[0], getDescendants[1].name, getDescendants[2].contents);
+  //         return instance;
+  //     }
+  //     //this method will return all descendant of json structure
+  // extractJSON(obj, descendant = []) {
+  //     for (const i in obj) {
+  //         if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
+  //             if (obj[i].name != undefined) {
+  //                 descendant.push(obj[i])
+  //             }
+  //             descendant = extractJSON(obj[i], descendant);
+  //         }
+  //     }
+  //     return descendant;
+  // }
+
 
 }
 /**
@@ -2169,7 +2287,19 @@ class UniversalQuantifier extends Quantifier {
 
   set(variable, value) {
     return new UniversalQuantifier(this.variable, this.domain.set(variable, value), this.phi.set(variable, value));
-  }
+  } // static deserialize(d, j) {
+  //     var instance = new this();
+  //     return instance
+  //var instance = new this(j.contents[0], j.contents[1].contents[0], j.contents[2]);
+  // var descendant = []
+  // var getDescendants = instance.extractJSON(j, descendant)
+  // for (const descendant in getDescendants) {
+  //     //we can obtain j' with descendants[d] 
+  //     d.deserialize(getDescendants[descendant]);
+  // }
+  //return instance;
+  //}
+
 
 }
 /**
@@ -3291,6 +3421,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Float": () => (/* binding */ Float),
 /* harmony export */   "FontFamily": () => (/* binding */ FontFamily),
 /* harmony export */   "FontSize": () => (/* binding */ FontSize),
+/* harmony export */   "FontWeight": () => (/* binding */ FontWeight),
 /* harmony export */   "MarginTop": () => (/* binding */ MarginTop),
 /* harmony export */   "MarginBottom": () => (/* binding */ MarginBottom),
 /* harmony export */   "MarginRight": () => (/* binding */ MarginRight),
@@ -3517,6 +3648,18 @@ class DimensionHeight extends WebElementFunction {
 class FontSize extends CssPropertyFunction {
   constructor() {
     super("font-size");
+  }
+
+}
+/**
+ * Function that extracts the font size.
+ * @extends CssPropertyFunction
+ */
+
+
+class FontWeight extends CssPropertyFunction {
+  constructor() {
+    super("font-weight");
   }
 
 }
@@ -5064,10 +5207,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "EnumeratedValue": () => (/* reexport safe */ _modules_enumerate_mjs__WEBPACK_IMPORTED_MODULE_8__.EnumeratedValue),
 /* harmony export */   "ExistentialQuantifier": () => (/* reexport safe */ _modules_quantifier_mjs__WEBPACK_IMPORTED_MODULE_10__.ExistentialQuantifier),
 /* harmony export */   "Explainer": () => (/* reexport safe */ _modules_tracer_mjs__WEBPACK_IMPORTED_MODULE_6__.Explainer),
+/* harmony export */   "extractJSON": () => (/* reexport safe */ _modules_extractJSON_mjs__WEBPACK_IMPORTED_MODULE_14__.extractJSON),
 /* harmony export */   "FindBySelector": () => (/* reexport safe */ _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__.FindBySelector),
 /* harmony export */   "Float": () => (/* reexport safe */ _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__.Float),
 /* harmony export */   "FontFamily": () => (/* reexport safe */ _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__.FontFamily),
 /* harmony export */   "FontSize": () => (/* reexport safe */ _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__.FontSize),
+/* harmony export */   "FontWeight": () => (/* reexport safe */ _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__.FontWeight),
 /* harmony export */   "FunctionNamedArgument": () => (/* reexport safe */ _modules_composed_function_mjs__WEBPACK_IMPORTED_MODULE_9__.FunctionNamedArgument),
 /* harmony export */   "GreaterOrEqual": () => (/* reexport safe */ _modules_numbers_mjs__WEBPACK_IMPORTED_MODULE_7__.GreaterOrEqual),
 /* harmony export */   "GreaterThan": () => (/* reexport safe */ _modules_numbers_mjs__WEBPACK_IMPORTED_MODULE_7__.GreaterThan),
@@ -5131,6 +5276,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_web_element_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/web-element.mjs */ "./modules/web-element.mjs");
 /* harmony import */ var _modules_verdict_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/verdict.mjs */ "./modules/verdict.mjs");
 /* harmony import */ var _modules_util_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modules/util.mjs */ "./modules/util.mjs");
+/* harmony import */ var _modules_extractJSON_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./modules/extractJSON.mjs */ "./modules/extractJSON.mjs");
 /*
 	A lineage library for DOM nodes
 	MIT License
@@ -5162,6 +5308,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 // DataTree for tree management
  // Local imports
+
 
 
 

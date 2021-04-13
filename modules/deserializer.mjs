@@ -47,13 +47,27 @@ import {
 } from "../index.mjs";
 class Deserializer {
     constructor() {
-            this.names = [];
-        }
-        /**
+        this.names = [];
+    }
 
-* Build method deserialize(j) ,j is a JSON structure , this methode will produce a Function object
-*/
 
+    /**
+     * Build method deserialize(j) ,j is a JSON structure , this methode will produce a Function object
+     */
+
+    // deserialize(j) {
+    //     //add the fisrt name in the array
+    //     var names = [j.name]
+    //         //add the name of all descendants in the array
+    //     var classNames = this.getClassName(j, names)
+    //         //console.log(classNames);
+    //     var instances = []
+    //     for (const className in classNames) {
+    //         var functionClass = eval(classNames[className])
+    //         instances.push(functionClass.deserialize(this, j))
+    //     }
+    //     return (instances);
+    // }
     deserialize(j) {
         //add the fisrt name in the array
         var names = [j.name]
@@ -62,11 +76,32 @@ class Deserializer {
             //console.log(classNames);
         var instances = []
         for (const className in classNames) {
-            var functionClass = eval(classNames[className])
-            instances.push(functionClass.deserialize(this, j))
+            //only letters are accepted
+            const validation = /^[A-Za-z]+$/;
+            if (classNames[className].match(validation)) {
+                var functionClass = eval(classNames[className])
+                instances.push(functionClass.deserialize(this, j))
+            }
+            // else{
+            //     console.log("invalide input: " + classNames[className]);
+            // }
+            //console.log(functionClass);
+            //console.log(functionClass.deserialize(this, j));
+            //console.log(className)
+            //functionClass.deserialize(this, j)
         }
-        return (instances[0]);
+        //return functionClass.deserialize(this, j) 
+        //var className = j.name
+        // determine  function class in the json object
+        //const functionClass = eval(className)
+        //console.log(functionClass);
+        //return a Function object
+        //return functionClass.deserialize(this, j)
+        //return instances
+        return instances;
     }
+
+
     getClassName(obj, names = []) {
             for (const i in obj) {
                 if (Array.isArray(obj[i]) || typeof obj[i] === 'object') {
@@ -147,7 +182,7 @@ var c = new Deserializer().deserialize(j)
 console.log(c)
     //console.log(c.variable)
     // console.log(c.domain);
-console.log('Contents of phi:', c.phi.contents);
+    //console.log('Contents of phi:', c.phi.contents);
 
 //console.log(Object.values(c)[1]);
 export { Deserializer };

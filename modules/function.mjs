@@ -86,15 +86,28 @@ class AbstractFunction {
     }
 
     // d is a deserializer and j is a JSON structure
+    // static deserialize(d, j) {
+    //         var instance = new this();
+    //         var descendant = []
+    //         var getDescendants = instance.extractJSON(j, descendant)
+    //         for (const descendant in getDescendants) {
+    //             //we can obtain j' with descendants[d] 
+    //             d.deserialize(getDescendants[descendant]);
+    //         }
+    //         return instance
+    //     }
     static deserialize(d, j) {
-            var instance = new this();
-            var descendant = []
-            var getDescendants = instance.extractJSON(j, descendant)
-            for (const descendant in getDescendants) {
-                //we can obtain j' with descendants[d] 
-                d.deserialize(getDescendants[descendant]);
+            const params = [];
+
+            for (const serializedParam of j.contents) {
+                if (typeof serializedParam == "object" && Object.keys(serializedParam).length == 2 && typeof serializedParam.name != "undefined" && typeof serializedParam.contents != "undefined") {
+                    params.push(d.deserialize(serializedParam));
+                } else {
+                    params.push(serializedParam);
+                }
             }
-            return instance
+
+            return new this(...params);
         }
         //this method will return all descendant of json structure
     extractJSON(obj, descendant = []) {
